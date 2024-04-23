@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Notification</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+  <!-- Custom styles -->
+  <style>
+    body {
+      background-color: rgb(236, 236, 236);
+      overflow-x: hidden; /* Prevent horizontal scrolling */
+
+    }
+    .header {
+      
+      background-color: #051747;
+      height: 60px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 20px;
+    }
+    .header-title {
+      color: #fff;
+      font-size: 24px;
+      font-weight: bold;
+      text-align: center;
+    }
+    .sidebar {
+      position: fixed;
+      top: 60px;
+      left: -250px;
+      height: calc(100% - 60px);
+      width: 250px;
+      background-color: #fff;
+      transition: left 0.3s ease-in-out;
+    }
+    .sidebar.show {
+      left: 0;
+    }
+    .sidebar a {
+      padding: 15px 20px;
+      display: block;
+      color: #051747;
+      font-size: 16px; 
+      font-weight: bold;
+      text-decoration: none;
+      border-bottom: 0.3px solid #ccc;
+    }
+    .sidebar a:first-child {
+      border-top: 0.5px solid #ccc;
+    }
+    .sidebar a:hover {
+      background-color: #f1f1f1;
+    }
+    .toggle-btn {
+      cursor: pointer;
+      color: #fff;
+    }
+    .user-name {
+      color: #fff;
+      font-size: 16px;
+      position: relative;
+    }
+    .user-dropdown-icon {
+      position: absolute;
+      top: 50%;
+      right: -20px;
+      transform: translateY(-50%);
+      color: #fff;
+    }
+    
+    /* Transition for sidebar and content */
+    .sidebar, #content {
+      transition: left 0.3s ease-in-out, margin-left 0.3s ease-in-out;
+    }
+
+    .notify-form{
+      background: rgb(247, 247, 247);
+      padding: 3em;
+      border: 1px solid #8f8f8f;
+      border-radius: 30px;
+
+    }
+
+    
+    @media (max-width: 768px) {
+      .header-title {
+        font-size: 20px; /* Decrease font size on smaller screens */
+      }
+      .sidebar {
+        width: 200px;
+      }
+      .container-fluid {
+        padding-left: 0; /* Remove left padding */
+        padding-right: 0; /* Remove right padding */
+      }
+    }
+
+
+    @media (min-width: 768px){
+      .row-cols-md-4>* {
+          -ms-flex: 0 0 25%;
+          flex: 0 0 25%;
+          max-width: 23%;
+      }
+    }
+  </style>
+</head>
+<body>
+  
+<div class="navbar header sticky-top">
+  <div class="toggle-btn" onclick="toggleSidebar()">
+    <i class="fas fa-bars fa-2x"></i>
+  </div>
+  <div class="header-title">FYP Progress Recorder</div>
+  <div class="user-name">John Doe <i class="fas fa-caret-down user-dropdown-icon"></i></div>
+</div>
+
+<div class="sidebar" id="sidebar">
+  <a href="#">Announcement</a>
+  <a href="#">Status Board</a>
+  <a href="#">Progress and Report</a>
+  <a href="#">Discussion</a>
+  <a href="#">Gallery</a>
+  <a href="#">Calendar</a>
+  <a href="#">Template</a>
+  <a href="#">Submission Portal</a>
+</div>
+
+<div class="container-fluid" id="content">
+  
+      <!-- BREADCRUMBS -->
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb"> 
+          <li class="breadcrumb-item"><a href="#">JUW - FYP Progress Recorder</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Mention Page Here..</li>
+        </ol>
+      </nav>
+
+      
+    <div class="container notify-form">
+        <!-- Pages Heading -->
+      <h2 style="text-align: center;">Notificaton</h2>
+      <div class="container mt-4">
+        <form>
+            <div class="form-group">
+              <label for="projectName">Project Name</label>
+              <input type="text" class="form-control" id="projectName" placeholder="Enter project name" required>
+            </div>
+            <div class="form-row">
+              <div class="form-group col">
+                <label for="groupID">Group ID</label>
+                <input type="text" class="form-control" id="groupID" placeholder="Enter group ID" required>
+              </div>
+              <div class="form-group col">
+                <label for="date">Date</label>
+                <input type="date" class="form-control" id="date" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="notificationType">Notification Type</label>
+              <select class="form-control" id="notificationType" required>
+                <option value="">Select Notification Type</option>
+                <option value="urgent">Urgent</option>
+                <option value="normal">Normal</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Send Notification To</label>
+              <div class="form-row">
+                <div class="col">
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" name="sendTo" id="group" value="group" checked>
+                    <label class="form-check-label" for="group">
+                      Group
+                    </label>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" name="sendTo" id="individual" value="individual">
+                    <label class="form-check-label" for="individual">
+                      Individual
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="message">Message</label>
+              <textarea class="form-control" id="message" rows="3" placeholder="Write your message here"></textarea>
+            </div>
+            <div class="text-center"> <!-- Center the button -->
+              <button type="submit" class="btn btn-primary">Send Notification</button>
+            </div>
+          </form>
+      </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS and dependencies -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<!-- Font Awesome -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"></script>
+
+<script>
+  function toggleSidebar() {
+    var sidebar = document.getElementById('sidebar');
+    var content = document.getElementById('content');
+    sidebar.classList.toggle('show');
+    if (sidebar.classList.contains('show')) {
+      content.style.marginLeft = '250px';
+    } else {
+      content.style.marginLeft = '0';
+    }
+  }
+</script>
+
+</body>
+</html>
