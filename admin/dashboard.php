@@ -23,8 +23,8 @@
 <div class="wrapper">
 <div class="sidebar" id="sidebar">
   <a href="#">Dashboard</a>
-  <a href="#">Faculty</a>
-  <a href="#">Student</a>
+  <a href="">Faculty</a>
+  <a href="showStudent.php">Student</a>
   <a href="#">Project</a>
   <a href="#">Result and Progress</a>
   
@@ -57,7 +57,7 @@
             <div class="row dashbtnparent row-cols-2 row-cols-sm-3 row-cols-md-4">
               <button class="dashbtn"><div class="col"><a href="#"><img src="Icons/announcement.png" alt="Icon 1"><br>Faculty</a></div></button>
               
-              <button class="dashbtn"><div class="col"><a href="#"><img src="Icons/progress.png" alt="Icon 2"><br>Student</a></div></button>
+              <button class="dashbtn"><div class="col"><a href="showuser.php"><img src="Icons/progress.png" alt="Icon 2"><br>Student</a></div></button>
               <button class="dashbtn"><div class="col"><a href="#"><img src="Icons/status board.png" alt="Icon 2"><br>Project</a></div></button>
               <button class="dashbtn"><div class="col"><a href="#"><img src="Icons/chat.png" alt="Icon 2"><br>Result and Progress</a></div></button>
 
