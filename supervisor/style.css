@@ -1,0 +1,153 @@
+/* Keep the existing styles */
+.wrapper {
+  display: flex;
+}
+
+body {
+  background-color: #f8f9fa;
+}
+.header {
+  background-color: #000d30;
+  height: 60px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+}
+.header-title {
+  color: #fff;
+  font-size: 24px;
+  font-weight: bold;
+  text-align: center;
+}
+.sidebar {
+  position: fixed;
+  top: 60px;
+  left: 0; /* Changed to make sidebar default open */
+  height: calc(100% - 60px);
+  width: 250px;
+  background-color: #fff;
+  transition: left 0.3s ease-in-out;
+}
+/* .sidebar a {
+  padding: 15px 20px;
+  display: block;
+  color: #051747;
+  font-size: 16px;
+  font-weight: bold;
+  text-decoration: none;
+  border-bottom: 0.3px solid #ccc;
+} */
+
+
+.sidebar a {
+  padding: 12px 14px;
+  display: block;
+  color: #051747;
+  font-size: 16px;
+  font-weight: 600;
+  text-decoration: none;
+  border-bottom: 1px solid #f9eeee;
+}
+.sidebar a:first-child {
+  border-top: 0.5px solid #ccc;
+}
+.sidebar a:hover {
+  background-color: #f1f1f1;
+}
+.toggle-btn {
+  cursor: pointer;
+  color: #fff;
+  
+}
+.user-name {
+  color: #fff;
+  font-size: 16px;
+  position: relative;
+  cursor: pointer;
+}
+.user-dropdown-icon {
+  position: absolute;
+  top: 50%;
+  right: -20px;
+  transform: translateY(-50%);
+  color: #fff;
+}
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+.dropdown-menu a {
+  display: block;
+  padding: 10px 20px;
+  color: #333;
+  text-decoration: none;
+}
+.dropdown-menu a:hover {
+  background-color: #f1f1f1;
+}
+.user-name:hover .dropdown-menu,
+.user-name:focus .dropdown-menu,
+.user-name.active .dropdown-menu {
+  display: block;
+}
+.recent {
+  border: 1px solid #ccc;
+  box-shadow: 2px 3px 7px gray;
+  border-radius: 10px;
+  padding: 15px;
+  margin: 15px 0px;
+  background-color: #D9D9D9;
+}
+.recent-content {
+  color: #081F62;
+  font-size: 25px;
+  padding-left: 15px;
+}
+.fa-chart-line {
+  color: #081F62;
+  font-size: 27px;
+}
+.dashbtnparent {
+  justify-content: center;
+}
+.dashbtn {
+  border: 1px solid #ccc;
+  box-shadow: 2px 3px 7px gray;
+  border-radius: 10px;
+  padding: 15px 0px;
+  margin: 7px;
+  text-align: center;
+}
+@media (max-width: 768px) {
+  .header-title {
+    font-size: 20px; /* Decrease font size on smaller screens */
+  }
+  .sidebar {
+    width: 200px;
+  }
+  .container-fluid {
+    padding-left: 0; /* Remove left padding */
+    padding-right: 0; /* Remove right padding */
+  }
+}
+@media (min-width: 768px) {
+  .row-cols-md-4>* {
+    -ms-flex: 0 0 25%;
+    flex: 0 0 25%;
+    max-width: 23%;
+  }
+}
+.sidebar .collapse {
+  padding-left: 15px;
+}
+.sidebar .collapse a {
+  font-size: 14px;
+  font-weight: normal;
+}

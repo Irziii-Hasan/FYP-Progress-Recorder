@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .sidebar {
+            background-color: #343a40;
+            min-height: 100vh;
+            color: white;
+        }
+
+        .sidebar a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            display: block;
+        }
+
+        .sidebar a:hover {
+            background-color: #495057;
+            border-radius: 5px;
+        }
+
+        .card {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+
+        .btn-primary {
+            background-color: #0d6efd;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: #0b5ed7;
+        }
+
+        .btn-green {
+            background-color: #28a745;
+            color: white;
+            border: none;
+        }
+
+        .btn-green:hover {
+            background-color: #218838;
+        }
+
+        .analytics-chart {
+            height: 200px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6c757d;
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav class="col-md-2 d-none d-md-block sidebar">
+                <div class="position-sticky">
+                    <h5 class="p-3">Admin Dashboard</h5>
+                    <a href="#">Dashboard Overview</a>
+                    <a href="#">User Management</a>
+                    <a href="#">Analytics</a>
+                    <a href="#">Notifications</a>
+                    <a href="#">Settings</a>
+                </div>
+            </nav>
+
+            <!-- Main Content -->
+            <main class="col-md-10 ms-sm-auto px-md-4">
+                <div class="row mt-4">
+                    <!-- Top Section -->
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">Total Users</div>
+                            <div class="card-body">
+                                <p>Coordinators: 5</p>
+                                <p>Supervisors: 10</p>
+                                <p>Students: 50</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">Total Projects</div>
+                            <div class="card-body">
+                                <p>Ongoing: 30</p>
+                                <p>Completed: 15</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">Upcoming Deadlines</div>
+                            <div class="card-body">
+                                <p>Submission: 3 days left</p>
+                                <p>Presentation: 5 days left</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Middle Section -->
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <div class="analytics-chart">
+                            Progress Status Chart
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="analytics-chart">
+                            Notifications Sent Chart
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bottom Section -->
+                <div class="row mt-4">
+                    <div class="col-md-12 text-end">
+                        <button class="btn btn-primary">Export Reports</button>
+                        <button class="btn btn-green">Settings Access</button>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

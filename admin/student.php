@@ -1,169 +1,50 @@
-<?php
-$emailError = ""; // Define $emailError variable to avoid undefined variable warning
-$emailValue = ""; // Initialize $emailValue variable to store the value of email field
-$nameValue = ""; // Initialize $nameValue variable to store the value of name field
-$enrollmentValue = ""; // Initialize $enrollmentValue variable to store the value of enrollment field
-$degreeProgramValue = ""; // Initialize $degreeProgramValue variable to store the value of degree-program field
-$batchValue = ""; // Initialize $batchValue variable to store the value of batch field
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Database connection details
-    $servername = "localhost"; // Change this if your database server is hosted elsewhere
-    $username = "root"; // Change this if your database username is different
-    $password = ""; // Change this if your database password is different
-    $dbname = "FYP_Progress_Recorder"; // Change this to the desired database name
-
-    // Create connection
-    $conn = new mysqli($servername, $username, $password, $dbname);
-
-    // Check connection
-    if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
-    }
-
-    // Create database
-    $sql = "CREATE DATABASE IF NOT EXISTS `$dbname`";
-    if ($conn->query($sql) === TRUE) {
-        // echo "Database created successfully<br>";
-    } else {
-        echo "Error creating database: " . $conn->error;
-    }
-
-    // Select the database
-    $conn->select_db($dbname);
-
-    // Create user table
-    $sql = "CREATE TABLE IF NOT EXISTS user (
-        id INT(11) AUTO_INCREMENT PRIMARY KEY,
-        username VARCHAR(255) NOT NULL,
-        email VARCHAR(255) NOT NULL,
-        password VARCHAR(255) NOT NULL,
-        role VARCHAR(50) NOT NULL
-    )";
-    if ($conn->query($sql) === TRUE) {
-        // echo "User table created successfully<br>";
-    } else {
-        echo "Error creating user table: " . $conn->error;
-    }
-
-    // Create student table
-    $sql = "CREATE TABLE IF NOT EXISTS student (
-        id INT(11) AUTO_INCREMENT PRIMARY KEY,
-        username VARCHAR(255) NOT NULL,
-        email VARCHAR(255) NOT NULL,
-        password VARCHAR(255) NOT NULL,
-        enrollment VARCHAR(50) NOT NULL,
-        year INT(4) NOT NULL,
-        degree_program VARCHAR(50) NOT NULL
-    )";
-    if ($conn->query($sql) === TRUE) {
-        // echo "Student table created successfully<br>";
-    } else {
-        echo "Error creating student table: " . $conn->error;
-    }
-
-    // Retrieve form data
-    $name = $_POST['name'];
-    $email = $_POST['email'];
-    $enrollment = $_POST['enrollment'];
-    $role = "Student"; // Since it's fixed in the form
-    $degree_program = $_POST['degree-program'];
-    $batch = $_POST['batch'];
-
-    // Validate email
-    $email = trim($_POST["email"]);
-    if (empty($email)) {
-        $emailError = "Email is required";
-    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $emailError = "Invalid email format";
-    } else {
-        // Check if email already exists in the database
-        $query = "SELECT * FROM student WHERE email = '$email'";
-        $result = $conn->query($query);
-
-        if ($result->num_rows > 0) {
-            $emailError = "Email already exists";
-            $emailValue = $email; // Preserve the value of email field
-            $nameValue = $_POST['name']; // Preserve the value of name field
-            $enrollmentValue = $_POST['enrollment']; // Preserve the value of enrollment field
-            $degreeProgramValue = $_POST['degree-program']; // Preserve the value of degree-program field
-            $batchValue = $_POST['batch']; // Preserve the value of batch field
-        } else {
-            // Generate password (username + last 4 digits of enrollment number)
-            $username = strtolower(str_replace(' ', '', $name));
-            $password = $username . substr($enrollment, -4);
-
-            // SQL to insert data into student table
-            $sql_student = "INSERT INTO student (username, email, enrollment, year, degree_program) 
-                            VALUES ('$name', '$email', '$enrollment', '$batch', '$degree_program')";
-
-            if ($conn->query($sql_student) === TRUE) {
-                // SQL to insert data into user table
-                $sql_user = "INSERT INTO user (username, email, password, role) 
-                             VALUES ('$username', '$email', '$password', '$role')";
-
-                if ($conn->query($sql_user) === TRUE) {
-                    echo '<script>alert("New record created successfully");</script>';
-                } else {
-                    echo '<script>alert("Error: ' . $sql_user . '<br>' . $conn->error . '");</script>';
-                }
-            } else {
-                echo '<script>alert("Error: ' . $sql_student . '<br>' . $conn->error . '");</script>';
-            }
-        }
-    }
-
-    // Close connection
-    $conn->close();
-}
-?>
-
+<?php include 'session_admin.php'; ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>FYP| Student</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-      <!-- Bootstrap CSS -->
-      <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Font Awesome -->
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
-  <!-- Custom styles -->
-  <link rel="stylesheet" href="style.css">
-  <style>
-    .form-all{
-      width: 650px;
-      padding: 20px 30px;
-      border: 1px solid #cbcbcb;
-      border-radius: 20px;
-      background-color:white;
-    }
-
-    .form-heading{
-      color:#0a4a91;
-      font-weight: 700;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student List</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <!-- Custom styles -->
+    <link rel="stylesheet" href="style.css">
+    <style>.heading {
+            color: #0a4a91;
+            font-weight: 700;
+        }
+        .table-container {
+            padding: 20px;
+            border: 1px solid #cbcbcb;
+            border-radius: 20px;
+            background-color: white;
+            margin-top: 20px;
+        }
+        .btn-view, .btn-add {
+            margin-right: 10px;
+        }
+        table th, table td {
+            vertical-align: middle;
+        }
+        .table th {
+            background-color: #f8f9fa;
+            color: #0a4a91;
+        }
+        .table-bordered {
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+        }</style>
 </head>
 <body>
+<?php include 'nav.php'; ?>
 
-<div class="navbar header sticky-top">
-  <div class="toggle-btn" onclick="toggleSidebar()">
-    <i class="fas fa-bars fa-2x"></i>
-  </div>
-  <div class="header-title">FYP Progress Recorder</div>
-  <div class="user-name">John Doe <i class="fas fa-caret-down user-dropdown-icon"></i></div>
-</div>
 <div class="wrapper">
-  <div class="sidebar" id="sidebar">
-    <a href="#">Dashboard</a>
-    <a href="#">Faculty</a>
-    <a href="#">Student</a>
-    <a href="#">Project</a>
-    <a href="#">Result and Progress</a>
-  </div>
+  <?php include 'sidebar.php'; ?>
 
   <div class="container-fluid" id="content">
     <div class="row">
@@ -171,103 +52,206 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         <!-- BREADCRUMBS -->
         <nav aria-label="breadcrumb">
-          <ol class="breadcrumb"> 
-          <li class="breadcrumb-item"><a href="dashboard.php">JUW - FYP Progress Recorder</a></li>
-          <li class="breadcrumb-item"><a href="showuser.php">Student</a></li>
-          <li class="breadcrumb-item active" aria-current="page">Add Student</li>
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="dashboard.php">JUW - FYP Progress Recorder</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Student</li>
           </ol>
         </nav>
-<div class="container mt-3 form-all">
-  <h2 class="text-center form-heading">Add Student</h2>
-  <form action="student.php" method="post">
-    <div class="mb-3 mt-3">
-        <label for="name">Student Name:</label>
-        <input type="text" class="form-control" id="name" placeholder="Enter Name" name="name" value="<?php echo htmlspecialchars($nameValue); ?>" required>
-      </div>
-      <div class="mb-3 mt-3">
-        <label for="email">Email:</label>
-        <input type="email" class="form-control" id="email" placeholder="Enter Email" name="email" value="<?php echo htmlspecialchars($emailValue); ?>" required>
-        <span class="error" style="color: red;"><?php echo $emailError; ?></span> <!-- Display email error message -->
-      </div>
-      <div class="mb-3 mt-3">
-        <label for="enrollment">Enrollment Number:</label>
-        <input type="text" class="form-control" id="enrollment" placeholder="Enter Enrollment" name="enrollment" value="<?php echo htmlspecialchars($enrollmentValue); ?>" required>
-      </div>
-      <div class="mb-3 mt-3">
-        <label for="role" class="form-label">Role:</label>
-        <input type="text" id="role" class="form-control" value="Student" readonly>
-      </div>
-      <div class="mb-3 mt-3">
-        <label for="degree-program">Degree Program:</label>
-        <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="degree-program" id="degree-program-cs" value="CS" <?php if ($degreeProgramValue === 'CS') echo 'checked'; ?> required>
-            <label class="form-check-label" for="degree-program-cs">CS</label>
+        <div class="container mt-5">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="heading">Student List</h1>
+            <a href="addstudent.php" class="btn btn-primary">Add Student</a>
           </div>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="degree-program" id="degree-program-se" value="SE" <?php if ($degreeProgramValue === 'SE') echo 'checked'; ?> required>
-            <label class="form-check-label" for="degree-program-se">SE</label>
-          </div>
-          <div class="mb-3 mt-3">
-            <label for="batch" class="form-label">Batch</label>
-            <select id="batch" class="form-select" name="batch" required>
-              <option value="" disabled selected>Select batch</option>
-              <option <?php if ($batchValue === '2021') echo 'selected'; ?>>2021</option>
-              <option <?php if ($batchValue === '2022') echo 'selected'; ?>>2022</option>
-              <option <?php if ($batchValue === '2023') echo 'selected'; ?>>2023</option>
-              <option <?php if ($batchValue === '2024') echo 'selected'; ?>>2024</option>
-              <option <?php if ($batchValue === '2025') echo 'selected'; ?>>2025</option>
-              <option <?php if ($batchValue === '2026') echo 'selected'; ?>>2026</option>
-            </select>
-          </div>
-    </div>
 
-    <div class="d-grid gap-2 d-md-block">
-      <a href="showStudent.php" class="btn btn-light">Cancle</a>
-      <button type="submit" class="btn btn-primary">Submit</button>
+         
+
+          <!-- Search -->
+          <!-- Filter and Search -->
+          <div class="row mb-3 justify-content-between">
+            <div class="col-md-2">
+              <!-- Filter by Batch -->
+              <form method="GET" action="">
+                <div class="input-group">
+                  <span class="input-group-text"><i class="bi bi-filter"></i></span>
+                  <select name="batch" class="form-control" onchange="this.form.submit()">
+                    <option value="">Select Batch</option>
+                    <?php
+                    // Database connection
+                    include 'config.php';
+
+                    // Fetch batches from the batches table
+                    $batchQuery = "SELECT BatchID, BatchName FROM batches ORDER BY BatchName ASC";
+                    $batchResult = $conn->query($batchQuery);
+
+                    if ($batchResult->num_rows > 0) {
+                        while ($batch = $batchResult->fetch_assoc()) {
+                            $selected = isset($_GET['batch']) && $_GET['batch'] == $batch['BatchName'] ? 'selected' : '';
+                            echo "<option value='{$batch['BatchName']}' $selected>{$batch['BatchName']}</option>";
+                        }
+                    }
+                    ?>
+                  </select>
+                </div>
+              </form>
+            </div>
+
+            <div class="row mb-3 justify-content-center">
+  <div class="col-md-6">
+    <!-- Search -->
+    <div class="input-group">
+      <span class="input-group-text"><i class="bi bi-search"></i></span>
+      <input class="form-control" type="search" id="myInput" placeholder="Search" aria-label="Search">
     </div>
-  </form>
+  </div>
 </div>
 
-    
-<!-- Bootstrap JS and dependencies -->
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-<!-- Font Awesome -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"></script>
+          <!-- Student Table -->
+          <div class="table-container">
+          <table class="table table-bordered table-striped">
+              <thead>
+                <tr>
+                  <th>S. No</th>
+                  <th>User ID</th>
+                  <th>Name</th>
+                  <th>Enrollment No</th>
+                  <th>Email</th>
+                  <th>Degree Program</th>
+                  <th>Batch</th> <!-- New column for Batch -->
+                  <th>Actions</th> <!-- New column for actions -->
+                  <th>Send Credential</th> <!-- New column for actions -->
+                </tr>
+              </thead>
+              <tbody id="myTable">
+                <?php
 
-<script>
-  function toggleSidebar() {
-    var sidebar = document.getElementById('sidebar');
-    var content = document.getElementById('content');
-    sidebar.classList.toggle('show');
-    if (sidebar.classList.contains('show')) {
-      content.style.marginLeft = '250px';
-    } else {
-      content.style.marginLeft = '0';
-    }
-  }
-</script>
-<script>
-    $(document).ready(function() {
-      $('#validationForm').submit(function(event) {
-        event.preventDefault();
-        var inputNumber = $('#enrollment').val();
-        // Check if the last four characters are integers
-        var lastFourDigits = inputNumber.slice(-4);
-        if (!/^\d+$/.test(lastFourDigits)) {
-          // Last four digits are not integers
-          alert("Last four digits should be integers!");
-          return;
-        }
-        // Proceed with form submission if validation passes
-        // You can add your further processing here
-        alert("Validation passed! Last four digits are integers: " + lastFourDigits);
-        // Uncomment the line below to submit the form
-        // $('#validationForm').submit();
-      });
-    });
-</script>
+                // Batch filtering logic
+                $batchFilter = '';
+                if (isset($_GET['batch']) && !empty($_GET['batch'])) {
+                    $batchID = mysqli_real_escape_string($conn, $_GET['batch']);
+                    $batchFilter = "WHERE batch = '$batchID'";
+                }
+ if (isset($_GET['id']) && !empty($_GET['id'])) {
+                      // Sanitize the input to prevent SQL injection
+                      $juw_id = mysqli_real_escape_string($conn, $_GET['id']);
 
+                      // Retrieve email associated with the JUW ID
+                      $sql_select_email = "SELECT email FROM student WHERE juw_id = '$juw_id'";
+                      $result = $conn->query($sql_select_email);
+
+                      if ($result->num_rows > 0) {
+                          $row = $result->fetch_assoc();
+                          $email = $row['email'];
+
+                          // SQL to delete the user from the user table based on email
+                          $sql_delete_user = "DELETE FROM user WHERE email = '$email'";
+                          if ($conn->query($sql_delete_user) === TRUE) {
+                              // Delete corresponding student record based on JUW ID
+                              $sql_delete_student = "DELETE FROM student WHERE juw_id = '$juw_id'";
+                              if ($conn->query($sql_delete_student) === TRUE) {
+                                  //echo "<div class='alert alert-success'>User and associated student records deleted successfully.</div>";
+                              } else {
+                                  echo "<div class='alert alert-danger'>Error deleting associated student records: " . $conn->error . "</div>";
+                              }
+                          } else {
+                              echo "<div class='alert alert-danger'>Error deleting user: " . $conn->error . "</div>";
+                          }
+                      } else {
+                          echo "<div class='alert alert-warning'>No matching record found in the student table.</div>";
+                      }
+                  }
+                // Fetch students based on the selected batch
+                $sql = "SELECT juw_id,enrollment, username, email, degree_program , batch FROM student $batchFilter ORDER BY username ASC";
+                $result = $conn->query($sql);
+
+                if ($result->num_rows > 0) {
+                    $count = 1;
+                    while ($row = $result->fetch_assoc()) {
+                        echo "<tr>";
+                        echo "<td>" . $count++ . "</td>";
+                        echo "<td>" . $row["juw_id"] . "</td>";
+                        echo "<td>" . $row["username"] . "</td>";
+                        echo "<td>" . $row["enrollment"] . "</td>";
+                        echo "<td>" . $row["email"] . "</td>";
+                        echo "<td>" . $row["degree_program"] . "</td>";
+                        echo "<td>" . $row["batch"] . "</td>"; // Display Batch Name
+                        echo "<td>";
+                        echo "<a href='editstudent.php?id=" . $row["juw_id"] . "' class='btn btn-warning btn-sm'><i class='bi bi-pencil'></i></a>";
+                        echo "<button class='btn btn-danger btn-sm' onclick='confirmDelete(\"" . $row["juw_id"] . "\")'><i class='bi bi-trash'></i></button>";
+                        echo "</td>";
+                        echo "<td>";
+                        echo "<button class='btn btn-info btn-sm' onclick='confirmSendEmail(\"" . $row["juw_id"] . "\", \"student\")'><i class='bi bi-envelope'></i></button>";
+                        echo "</td>";
+                        echo "</tr>";
+                    }
+                } else {
+                    echo "<tr><td colspan='6'>No students found</td></tr>";
+                }
+                ?>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- JavaScript -->
+        <script>
+          function confirmDelete(juw_id) {
+            if (confirm("Are you sure you want to delete this record?")) {
+              window.location.href = "?id=" + juw_id;
+            }
+          }
+
+          function confirmSendEmail(juw_id, userType) {
+            if (confirm("Are you sure you want to send an email to this user?")) {
+              var form = document.createElement('form');
+              form.method = 'POST';
+              form.action = 'sendEmail.php';
+
+              var inputId = document.createElement('input');
+              inputId.type = 'hidden';
+              inputId.name = 'juw_id';
+              inputId.value = juw_id;
+
+              var inputType = document.createElement('input');
+              inputType.type = 'hidden';
+              inputType.name = 'user_type';
+              inputType.value = userType;
+
+              form.appendChild(inputId);
+              form.appendChild(inputType);
+              document.body.appendChild(form);
+              form.submit();
+            }
+          }
+
+          document.getElementById("myInput").addEventListener("keyup", function() {
+            var filter, table, rows;
+            filter = document.getElementById("myInput").value.toUpperCase();
+            table = document.getElementById("myTable");
+            rows = table.getElementsByTagName("tr");
+
+            for (var i = 0; i < rows.length; i++) {
+              var cells = rows[i].getElementsByTagName("td");
+              var found = false;
+              for (var j = 0; j < cells.length && !found; j++) {
+                var cell = cells[j];
+                if (cell) {
+                  if (cell.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                    found = true;
+                  }
+                }
+              }
+              if (found) {
+                rows[i].style.display = "";
+              } else {
+                rows[i].style.display = "none";
+              }
+            }
+          });
+        </script>
+      </div>
+    </div>
+  </div>
+</div>
+<?php if (isset($message)) echo $message; ?>
 </body>
 </html>

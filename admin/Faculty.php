@@ -1,171 +1,174 @@
-<?php
-$emailError = ""; // Define $emailError variable to avoid undefined variable warning
-$emailValue = ""; // Initialize $emailValue variable to store the value of email field
-$nameValue = ""; // Initialize $nameValue variable to store the value of name field
-$designationValue = ""; // Initialize $designationValue variable to store the value of designation field
+<?php include 'session_admin.php'; ?>
+<?php include 'config.php'; ?>
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Database connection details
-    $servername = "localhost"; // Change this if your database server is hosted elsewhere
-    $username = "root"; // Change this if your database username is different
-    $password = ""; // Change this if your database password is different
-    $dbname = "FYP_Progress_Recorder"; // Change this to the desired database name
-
-    // Create connection
-    $conn = new mysqli($servername, $username, $password, $dbname);
-
-    // Check connection
-    if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
-    }
-
-    // Retrieve form data
-    $name = $_POST['name'];
-    $email = $_POST['email'];
-    $designation = $_POST['designation'];
-    $role = $_POST['role'];
-
-    // Validate email
-    $email = trim($_POST["email"]);
-    if (empty($email)) {
-        $emailError = "Email is required";
-    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $emailError = "Invalid email format";
-    } else {
-        // Check if email already exists in the database
-        $query = "SELECT * FROM faculty WHERE email = '$email'";
-        $result = $conn->query($query);
-
-        if ($result->num_rows > 0) {
-            $emailError = "Email already exists";
-            $emailValue = $email; // Preserve the value of email field
-            $nameValue = $_POST['name']; // Preserve the value of name field
-            $designationValue = $_POST['designation']; // Preserve the value of designation field
-        } else {
-            // Generate password (username + last 4 digits of designation)
-            $username = strtolower(str_replace(' ', '', $name));
-            $password = $username . substr($designation, -4);
-
-            // SQL to insert data into faculty table
-            $sql_faculty = "INSERT INTO faculty (username, email, password, designation, role) 
-                            VALUES ('$name', '$email', '$password', '$designation', '$role')"; 
-
-            if ($conn->query($sql_faculty) === TRUE) {
-                echo '<script>alert("New record created successfully");</script>';
-            } else {
-                echo '<script>alert("Error: ' . $sql_faculty . '<br>' . $conn->error . '");</script>';
-            }
-        }
-    }
-
-    // Close connection
-    $conn->close();
-}
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>FYP| Add Faculty</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
-  <style>
-    .form-all {
-      width: 650px;
-      padding: 20px 30px;
-      border: 1px solid #cbcbcb;
-      border-radius: 20px;
-      background-color: white;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty List</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <!-- Custom styles -->
+    <link rel="stylesheet" href="style.css">
+    <style>.heading {
+            color: #0a4a91;
+            font-weight: 700;
+        }
+        .table-container {
+            padding: 20px;
+            border: 1px solid #cbcbcb;
+            border-radius: 20px;
+            background-color: white;
+            margin-top: 20px;
+        }
+        .btn-view, .btn-add {
+            margin-right: 10px;
+        }
+        table th, table td {
+            vertical-align: middle;
+        }
+        .table th {
+            background-color: #f8f9fa;
+            color: #0a4a91;
+        }
+        .table-bordered {
 
-    .form-heading {
-      color: #0a4a91;
-      font-weight: 700;
-    }
-  </style>
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .breadc{
+          display:inline-block;
+        }
+        
+        </style>
 </head>
 <body>
+<?php include 'nav.php'; ?>
 
-<div class="navbar header sticky-top">
-  <div class="toggle-btn" onclick="toggleSidebar()">
-    <i class="fas fa-bars fa-2x"></i>
-  </div>
-  <div class="header-title">FYP Progress Recorder</div>
-  <div class="user-name">John Doe <i class="fas fa-caret-down user-dropdown-icon"></i></div>
-</div>
 <div class="wrapper">
-  <div class="sidebar" id="sidebar">
-    <a href="#">Dashboard</a>
-    <a href="#">Faculty</a>
-    <a href="#">Student</a>
-    <a href="#">Project</a>
-    <a href="#">Result and Progress</a>
-  </div>
+  <?php include 'sidebar.php'; ?>
 
   <div class="container-fluid" id="content">
     <div class="row">
       <div class="col-md-12">
 
         <!-- BREADCRUMBS -->
-        <nav aria-label="breadcrumb">
+        <nav aria-label="breadcrumb"  class="breadc">
           <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="dashboard.php">JUW - FYP Progress Recorder</a></li>
-            <li class="breadcrumb-item"><a href="showuser.php">Faculty</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Add Faculty</li>
+            <li class="breadcrumb-item active" aria-current="page">Faculty</li>
           </ol>
         </nav>
-        <div class="container mt-3 form-all">
-          <h2 class="text-center form-heading">Add Faculty</h2>
-          <form action="faculty.php" method="post">
-            <div class="mb-3 mt-3">
-              <label for="name">Faculty Name:</label>
-              <input type="text" class="form-control" id="name" placeholder="Enter Name" name="name" value="<?php echo htmlspecialchars($nameValue); ?>" required>
+        <div class="container mt-5">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="heading">Faculty List</h1>
+            <a href="addfaculty.php" class="btn btn-primary">Add Faculty</a>
+          </div>
+          <!-- Search and Filter -->
+          <div class="row mb-3 justify-content-center">
+            <div class="col-md-6">
+              <div class="input-group">
+                <span class="input-group-prepend">
+                  <div class="input-group-text"><i class="bi bi-search"></i></div>
+                </span>
+                <input class="form-control me-2" type="search" id="myInput" placeholder="Search" aria-label="Search">
+              </div>
             </div>
-            <div class="mb-3 mt-3">
-              <label for="email">Email:</label>
-              <input type="email" class="form-control" id="email" placeholder="Enter Email" name="email" value="<?php echo htmlspecialchars($emailValue); ?>" required>
-              <span class="error" style="color: red;"><?php echo $emailError; ?></span> <!-- Display email error message -->
-            </div>
-            <div class="mb-3 mt-3">
-              <label for="designation">Designation:</label>
-              <select class="form-select" id="designation" name="designation" required>
-                <option selected>Select Designation</option>
-                <option value="Professor">Professor</option>
-                <option value="Lecturer">Lecturer</option>
-                <option value="Associate Professor">Associate Professor</option>
-                <option value="Assistant Professor">Assistant Professor</option>
-                <option value="Assistant Lecturer">Assistant Lecturer</option>
-                <option value="Lecturer">Senior Lecturer</option>
-                <!-- Add more options as needed -->
-              </select>
-            </div>
-            <div class="mb-3 mt-3">
-              <label for="role">Role:</label>
-              <select class="form-select" id="role" name="role" required>
-                <option selected>Select Role</option>
-                <option value="Admin">Admin</option>
-                <option value="Supervisor">Supervisor</option>
-                <option value="Coordinator">Coordinator</option>
-                <option value="Evaluator">Evaluator</option>
+          </div>
 
-                <!-- Add more options as needed -->
-              </select>
-            </div>
-            <div class="d-grid gap-2 d-md-block">
-              <a href="showuser.php" class="btn btn-light">Cancel</a>
-              <button type="submit" class="btn btn-primary">Submit</button>
-            </div>
-          </form>
+          <div class="table-container">
+          <table class="table table-bordered table-striped">
+              <thead>
+                <tr>
+                  <th>S. No</th>
+                  <th>User ID</th>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Professional Email</th>
+                  <th>Designation</th>
+                  <th>Actions</th>
+                  <th>Send Credentials</th> <!-- New column for actions -->
+                </tr>
+              </thead>
+              <tbody id="myTable">
+                <?php
+                
+
+                  if (isset($_GET['id']) && !empty($_GET['id'])) {
+                      // Sanitize the input to prevent SQL injection
+                      $juw_id = mysqli_real_escape_string($conn, $_GET['id']);
+
+                      // Retrieve email associated with the JUW ID
+                      $sql_select_email = "SELECT email FROM faculty WHERE juw_id = '$juw_id'";
+                      $result = $conn->query($sql_select_email);
+
+                      if ($result->num_rows > 0) {
+                          $row = $result->fetch_assoc();
+                          $email = $row['email'];
+
+                          // SQL to delete the user from the user table based on email
+                          $sql_delete_user = "DELETE FROM user WHERE email = '$email'";
+                          if ($conn->query($sql_delete_user) === TRUE) {
+                              // Delete corresponding faculty record based on JUW ID
+                              $sql_delete_faculty = "DELETE FROM faculty WHERE juw_id = '$juw_id'";
+                              if ($conn->query($sql_delete_faculty) === TRUE) {
+                                  //echo "<div class='alert alert-success'>User and associated faculty records deleted successfully.</div>";
+                              } else {
+                                  echo "<div class='alert alert-danger'>Error deleting associated faculty records: " . $conn->error . "</div>";
+                              }
+                          } else {
+                              echo "<div class='alert alert-danger'>Error deleting user: " . $conn->error . "</div>";
+                          }
+                      } else {
+                          echo "<div class='alert alert-warning'>No matching record found in the faculty table.</div>";
+                      }
+                  }
+
+                  $sql = "SELECT juw_id, username, email, professional_email, designation FROM faculty ORDER BY juw_id ASC";
+                  $result = $conn->query($sql);
+
+                  if ($result->num_rows > 0) {
+                      $count = 1;
+                      // Output data of each row
+                      while($row = $result->fetch_assoc()) {
+                          echo "<tr>";
+                          echo "<td>" . $count++ . "</td>";
+                          echo "<td>" . $row["juw_id"] . "</td>";
+                          echo "<td>" . $row["username"] . "</td>";
+                          echo "<td>" . $row["email"] . "</td>";
+                          echo "<td>" . $row["professional_email"] . "</td>";
+                          echo "<td>" . $row["designation"] . "</td>";
+                          // Actions column with edit, delete and send email buttons
+                          echo "<td>";
+                          echo "<a href='editfaculty.php?id=" . $row["juw_id"] . "' class='btn btn-warning btn-sm'><i class='bi bi-pencil'></i></a>";
+                          echo "<button class='btn btn-danger btn-sm' onclick='confirmDelete(\"" . $row["juw_id"] . "\")'><i class='bi bi-trash'></i></button>";
+                          echo "</td>";
+                          echo "<td>";
+                          echo "<button class='btn btn-info btn-sm' onclick='confirmSendEmail(\"" . $row["juw_id"] . "\", \"" . $row["email"] . "\", \"faculty\")'><i class='bi bi-envelope'></i></button>";
+                          echo "</td>";
+                          echo "</tr>";
+                      }
+                  } else {
+                      echo "<tr><td colspan='7'>No faculty members found</td></tr>"; // Updated colspan to 7
+                  }
+                  $conn->close();
+                ?>
+              </tbody>
+            </table>
+          </div>
         </div>
 
         <!-- Bootstrap JS and dependencies -->
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-        <!-- Font Awesome -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"></script>
 
         <script>
           function toggleSidebar() {
@@ -178,11 +181,73 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
               content.style.marginLeft = '0';
             }
           }
+
+          function confirmDelete(juw_id) {
+            if (confirm("Are you sure you want to delete this record?")) {
+              window.location.href = "?id=" + juw_id;
+            }
+          }
+
+          function confirmSendEmail(juw_id, email, userType) {
+            if (confirm("Are you sure you want to send an email to this user?")) {
+              var form = document.createElement('form');
+              form.method = 'POST';
+              form.action = 'sendEmail.php';
+
+              var inputJuwId = document.createElement('input');
+              inputJuwId.type = 'hidden';
+              inputJuwId.name = 'juw_id';
+              inputJuwId.value = juw_id.charAt(0).toLowerCase() + juw_id.slice(1); // Convert first letter to lowercase
+
+              var inputEmail = document.createElement('input');
+              inputEmail.type = 'hidden';
+              inputEmail.name = 'email';
+              inputEmail.value = email;
+
+              var inputType = document.createElement('input');
+              inputType.type = 'hidden';
+              inputType.name = 'user_type';
+              inputType.value = userType;
+
+              form.appendChild(inputJuwId);
+              form.appendChild(inputEmail);
+              form.appendChild(inputType);
+              document.body.appendChild(form);
+              form.submit();
+            }
+          }
+
+          document.getElementById("myInput").addEventListener("keyup", function() {
+            var filter, table, rows;
+            filter = document.getElementById("myInput").value.toUpperCase();
+            table = document.getElementById("myTable");
+            rows = table.getElementsByTagName("tr");
+
+            // Loop through all table rows, and hide those who don't match the search query
+            for (var i = 0; i < rows.length; i++) {
+              var cells = rows[i].getElementsByTagName("td");
+              var found = false;
+              for (var j = 0; j < cells.length && !found; j++) {
+                var cell = cells[j];
+                if (cell) {
+                  if (cell.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                    found = true;
+                  }
+                }
+              }
+              if (found) {
+                rows[i].style.display = "";
+              } else {
+                rows[i].style.display = "none";
+              }
+            }
+          });
         </script>
       </div>
     </div>
   </div>
 </div>
+<?php if (isset($message)) echo $message; ?>
 
 </body>
 </html>

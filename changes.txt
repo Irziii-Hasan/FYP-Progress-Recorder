@@ -1,0 +1,12 @@
+coordinator
+	result_table.php
+	viewResult.php
+	view_student_result.php
+	remove managevisibility.php (newfile update_visibilty.php)
+	update forms.php
+	dashboard.php
+	style.css
+	sidebar.php
+	navbar.php
+
+
